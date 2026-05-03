@@ -3,7 +3,7 @@
 
 #include <cassert>
 #include <cerrno>
-#include <cstring>
+#include <stdio.h>
 
 #ifdef __linux__
 #    include <link.h>
@@ -878,9 +878,7 @@ Tracker::Tracker(
 
     d_writer->setMainTidAndSkippedFrames(thread_id(), computeMainTidSkip());
     if (!d_writer->writeHeader(false)) {
-        // Save errno before string ops below can clobber it.
-        int saved_errno = errno;
-        throw IoError{"Failed to write output header: " + std::string(strerror(saved_errno))};
+        throw IoError{"Failed to write output header: " + std::string(strerror(errno))};
     }
 
     RecursionGuard guard;
@@ -948,8 +946,7 @@ Tracker::BackgroundThread::BackgroundThread(
 #ifdef __linux__
     d_procs_statm.open("/proc/self/status");
     if (!d_procs_statm) {
-        int saved_errno = errno;
-        throw IoError{"Failed to open /proc/self/status: " + std::string(strerror(saved_errno))};
+        throw IoError{"Failed to open /proc/self/status: " + std::string(strerror(errno))};
     }
 #endif
 }

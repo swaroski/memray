@@ -379,10 +379,10 @@ SocketSink::open()
     }
 
     if (listen(sockfd, 1) == -1) {
-        int saved_errno = errno;
+        std::string reason = strerror(errno);
         ::close(sockfd);
-        LOG(ERROR) << "Encountered error in 'listen' call: " << strerror(saved_errno);
-        throw IoError{"Failed to listen on socket: " + std::string(strerror(saved_errno))};
+        LOG(ERROR) << "Encountered error in 'listen' call: " << reason;
+        throw IoError{"Failed to listen on socket: " + reason};
     }
 
     LOG(DEBUG) << "Waiting for connections";
